@@ -1,4 +1,4 @@
-FROM gcr.io/distroless/static@sha256:cb0f70353c21d1e472a9ed2055c8a62fd842de52dd2db9dfb31c6e019648bf51
+FROM alpine@sha256:bc41182d7ef5ffc53a40b044e725193bc10142a1243f395ee852a8d9730fc2ad
 
 COPY nop.sh /nop.sh
-ENTRYPOINT ['/nop.sh']
+ENTRYPOINT ["/nop.sh"]
