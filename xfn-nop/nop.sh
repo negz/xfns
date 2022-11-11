@@ -1,3 +1,3 @@
 #!/bin/sh
 
-cat /dev/stdin > /dev/stdout
+cat /dev/stdin
