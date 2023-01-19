@@ -1,0 +1,11 @@
+apiVersion: gotemplate.xfn.upbound.io/v1alpha1
+kind: DemoComposite
+metadata:
+  name: example
+spec:
+  parameters:
+    createSecret: false
+    configMapCount: 1
+  writeConnectionSecretToRef:
+    name: demo-composite-example-connection
+    namespace: upbound-system

@@ -1,0 +1,36 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: CompositeResourceDefinition
+metadata:
+  name: democomposites.gotemplate.xfn.upbound.io
+spec:
+  group: gotemplate.xfn.upbound.io
+  names:
+    kind: DemoComposite
+    plural: democomposites
+  versions:
+    - name: v1alpha1
+      served: true
+      referenceable: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              properties:
+                parameters:
+                  type: object
+                  description: Configuration parameters.
+                  properties:
+                    createSecret:
+                      type: boolean
+                      description: Should a secret be created for this cluster.
+                    configMapCount:
+                      type: integer
+                      description: Desired configmap count.
+                  required:
+                    - createSecret
+                    - configMapCount
+              required:
+                - parameters
+

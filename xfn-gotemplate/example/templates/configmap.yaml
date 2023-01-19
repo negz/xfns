@@ -1,0 +1,20 @@
+{{- range $index := until ( .composite.resource.spec.parameters.configMapCount | int ) }}
+apiVersion: kubernetes.crossplane.io/v1alpha1
+kind: Object
+metadata:
+  name: "i-am-the-configmap-{{ $index }}"
+  annotations:
+    gotemplate.xfn.upbound.io/resource-name: "resource-configmap-{{ $index }}"
+spec:
+  forProvider:
+    manifest:
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        namespace: sample-namespace
+        labels:
+          example: "true"
+      data:
+        index: {{ $index | quote }}
+---
+{{- end }}
