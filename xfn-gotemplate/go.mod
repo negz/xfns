@@ -2,11 +2,9 @@ module github.com/upbound/xfn-gotemplate
 
 go 1.19
 
-replace github.com/crossplane/crossplane => /Users/hasanturken/Workspace/crossplane/crossplane
-
 require (
 	github.com/Masterminds/sprig/v3 v3.2.3
-	github.com/crossplane/crossplane v0.0.0-00010101000000-000000000000
+	github.com/crossplane/crossplane v1.11.0-rc.0.0.20230124042458-244f40b8e7a6
 	github.com/crossplane/crossplane-runtime v0.19.0-rc.0.0.20221114195150-65044f043902
 	github.com/pkg/errors v0.9.1
 	k8s.io/apimachinery v0.26.1
