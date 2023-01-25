@@ -74,6 +74,9 @@ def main():
         if "annotations" not in r["resource"]["metadata"]:
             r["resource"]["metadata"]["annotations"] = {}
 
+        if ANNOTATION_KEY_QUOTE in r["resource"]["metadata"]["annotations"]:
+            continue
+
         r["resource"]["metadata"]["annotations"][ANNOTATION_KEY_AUTHOR] = author
         r["resource"]["metadata"]["annotations"][ANNOTATION_KEY_QUOTE] = quote
 
