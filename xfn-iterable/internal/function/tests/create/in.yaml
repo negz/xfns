@@ -1,0 +1,71 @@
+apiVersion: apiextensions.crossplane.io/v1alpha1
+kind: FunctionIO
+config:
+  apiVersion: xfn-iterable.crossplane.io/v1alpha1
+  kind: Config
+  metadata:
+    name: topic-consumers
+  spec:
+    fromFieldPath: spec.consumers
+    patchSets:
+      - name: resource-name-principal
+        patches:
+          - fromFieldPath: spec.topicName
+            toFieldPath: spec.forProvider.resourceName
+          - type: FromIterableFieldPath
+            fromFieldPath: principal
+            toFieldPath: spec.forProvider.resourcePrincipal
+    resources:
+      - name: read-acl # allow consumer to read data
+        base:
+          apiVersion: acl.kafka.crossplane.io/v1alpha1
+          kind: AccessControlList
+          spec:
+            forProvider:
+              resourceType: "Topic"
+              resourceHost: "*"
+              resourceOperation: "Read"
+              resourcePermissionType: "Allow"
+              resourcePatternTypeFilter: "Literal"
+        patches:
+          - type: PatchSet
+            patchSetName: resource-name-principal
+      - name: describe-acl # allow consumer to describe topic
+        base:
+          apiVersion: acl.kafka.crossplane.io/v1alpha1
+          kind: AccessControlList
+          spec:
+            forProvider:
+              resourceType: "Topic"
+              resourceHost: "*"
+              resourceOperation: "Describe"
+              resourcePermissionType: "Allow"
+              resourcePatternTypeFilter: "Literal"
+        patches:
+          - type: PatchSet
+            patchSetName: resource-name-principal
+      - name: transform-string
+        base:
+          apiVersion: foo.testing/v1alpha1
+          kind: Foo
+        patches:
+          - fromFieldPath: spec.topicName
+            toFieldPath: spec.forProvider.testValue
+            transforms:
+              - type: string
+                string:
+                  fmt: "prefix-%s"
+observed:
+  composite:
+    resource:
+      apiVersion: xfn-iterable.crossplane.io/v1alpha1
+      kind: XTopic
+      metadata:
+        name: my-topic
+      spec:
+        topicName: my_topic
+        producers:
+          - principal: "User:producer-app"
+        consumers:
+          - principal: "User:foo-app"
+          - principal: "User:bar-app"

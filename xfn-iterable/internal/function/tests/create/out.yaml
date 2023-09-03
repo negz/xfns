@@ -1,0 +1,151 @@
+apiVersion: apiextensions.crossplane.io/v1alpha1
+kind: FunctionIO
+config:
+  apiVersion: xfn-iterable.crossplane.io/v1alpha1
+  kind: Config
+  metadata:
+    name: topic-consumers
+  spec:
+    fromFieldPath: spec.consumers
+    patchSets:
+      - name: resource-name-principal
+        patches:
+          - fromFieldPath: spec.topicName
+            toFieldPath: spec.forProvider.resourceName
+          - type: FromIterableFieldPath
+            fromFieldPath: principal
+            toFieldPath: spec.forProvider.resourcePrincipal
+    resources:
+      - name: read-acl # allow consumer to read data
+        base:
+          apiVersion: acl.kafka.crossplane.io/v1alpha1
+          kind: AccessControlList
+          spec:
+            forProvider:
+              resourceType: "Topic"
+              resourceHost: "*"
+              resourceOperation: "Read"
+              resourcePermissionType: "Allow"
+              resourcePatternTypeFilter: "Literal"
+        patches:
+          - type: PatchSet
+            patchSetName: resource-name-principal
+      - name: describe-acl # allow consumer to describe topic
+        base:
+          apiVersion: acl.kafka.crossplane.io/v1alpha1
+          kind: AccessControlList
+          spec:
+            forProvider:
+              resourceType: "Topic"
+              resourceHost: "*"
+              resourceOperation: "Describe"
+              resourcePermissionType: "Allow"
+              resourcePatternTypeFilter: "Literal"
+        patches:
+          - type: PatchSet
+            patchSetName: resource-name-principal
+      - name: transform-string
+        base:
+          apiVersion: foo.testing/v1alpha1
+          kind: Foo
+        patches:
+          - fromFieldPath: spec.topicName
+            toFieldPath: spec.forProvider.testValue
+            transforms:
+              - type: string
+                string:
+                  fmt: "prefix-%s"
+observed:
+  composite:
+    resource:
+      apiVersion: xfn-iterable.crossplane.io/v1alpha1
+      kind: XTopic
+      metadata:
+        name: my-topic
+      spec:
+        topicName: my_topic
+        producers:
+          - principal: "User:producer-app"
+        consumers:
+          - principal: "User:foo-app"
+          - principal: "User:bar-app"
+desired:
+  resources:
+    - name: read-acl-ea229
+      resource:
+        apiVersion: acl.kafka.crossplane.io/v1alpha1
+        kind: AccessControlList
+        metadata:
+          name: my-topic-da1a8
+        spec:
+          forProvider:
+            resourceType: "Topic"
+            resourceName: "my_topic"
+            resourcePrincipal: "User:foo-app"
+            resourceHost: "*"
+            resourceOperation: "Read"
+            resourcePermissionType: "Allow"
+            resourcePatternTypeFilter: "Literal"
+    - name: describe-acl-097f6
+      resource:
+        apiVersion: acl.kafka.crossplane.io/v1alpha1
+        kind: AccessControlList
+        metadata:
+          name: my-topic-2b6c6
+        spec:
+          forProvider:
+            resourceType: "Topic"
+            resourceName: "my_topic"
+            resourcePrincipal: "User:foo-app"
+            resourceHost: "*"
+            resourceOperation: "Describe"
+            resourcePermissionType: "Allow"
+            resourcePatternTypeFilter: "Literal"
+    - name: transform-string-29f39
+      resource:
+        apiVersion: foo.testing/v1alpha1
+        kind: Foo
+        metadata:
+          name: my-topic-7bb89
+        spec:
+          forProvider:
+            testValue: prefix-my_topic
+    - name: read-acl-0f657
+      resource:
+        apiVersion: acl.kafka.crossplane.io/v1alpha1
+        kind: AccessControlList
+        metadata:
+          name: my-topic-b03d1
+        spec:
+          forProvider:
+            resourceType: "Topic"
+            resourceName: "my_topic"
+            resourcePrincipal: "User:bar-app"
+            resourceHost: "*"
+            resourceOperation: "Read"
+            resourcePermissionType: "Allow"
+            resourcePatternTypeFilter: "Literal"
+    - name: describe-acl-b509e
+      resource:
+        apiVersion: acl.kafka.crossplane.io/v1alpha1
+        kind: AccessControlList
+        metadata:
+          name: my-topic-2bbc2
+        spec:
+          forProvider:
+            resourceType: "Topic"
+            resourceName: "my_topic"
+            resourcePrincipal: "User:bar-app"
+            resourceHost: "*"
+            resourceOperation: "Describe"
+            resourcePermissionType: "Allow"
+            resourcePatternTypeFilter: "Literal"
+    - name: transform-string-a2513
+      resource:
+        apiVersion: foo.testing/v1alpha1
+        kind: Foo
+        metadata:
+          name: my-topic-c0aaf
+        spec:
+          forProvider:
+            testValue: prefix-my_topic

@@ -1,0 +1,11 @@
+apiVersion: meta.pkg.crossplane.io/v1alpha1
+kind: Function
+metadata:
+  name: xfn-iterable
+  annotations:
+    meta.crossplane.io/maintainer: Statnett Crossplane Developers
+    meta.crossplane.io/source: github.com/crossplane-contrib/xfn-iterable
+    meta.crossplane.io/license: MIT
+    meta.crossplane.io/description: |
+      An experimental Composition Function to work around the lack of support for iterations
+      in standard Crossplane compositions

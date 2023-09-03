@@ -1,0 +1,111 @@
+apiVersion: apiextensions.crossplane.io/v1alpha1
+kind: FunctionIO
+config:
+  apiVersion: xfn-iterable.crossplane.io/v1alpha1
+  kind: Config
+  metadata:
+    name: topic-producers
+  spec:
+    fromFieldPath: spec.consumers
+    resources:
+      - name: acl-foo
+        base:
+          apiVersion: acl.kafka.crossplane.io/v1alpha1
+          kind: AccessControlList
+      - name: acl-bar
+        base:
+          apiVersion: acl.kafka.crossplane.io/v1alpha1
+          kind: AccessControlList
+observed:
+  composite:
+    resource:
+      apiVersion: xfn-iterable.crossplane.io/v1alpha1
+      kind: XTopic
+      metadata:
+        name: my-topic
+      spec:
+        topicName: my_topic
+        producers:
+          - principal: "User:producer-app"
+        consumers:
+          - principal: "User:foo-app"
+          - principal: "User:bar-app"
+  resources:
+    - name: acl-foo-95a0e
+      resource:
+        apiVersion: acl.kafka.crossplane.io/v1alpha1
+        kind: AccessControlList
+        metadata:
+          name: my-topic-93af1
+    - name: acl-bar-95a0e
+      resource:
+        apiVersion: acl.kafka.crossplane.io/v1alpha1
+        kind: AccessControlList
+        metadata:
+          name: my-topic-b9254
+    - name: acl-foo-88f01
+      resource:
+        apiVersion: acl.kafka.crossplane.io/v1alpha1
+        kind: AccessControlList
+        metadata:
+          name: my-topic-1f8b1
+    - name: acl-bar-88f01
+      resource:
+        apiVersion: acl.kafka.crossplane.io/v1alpha1
+        kind: AccessControlList
+        metadata:
+          name: my-topic-6d30a
+    # This resource is obsolete and should be deleted
+    - name: acl-foo-2
+      resource:
+        apiVersion: acl.kafka.crossplane.io/v1alpha1
+        kind: AccessControlList
+        metadata:
+          name: my-topic-avo3i
+    # This resource is obsolete and should be deleted
+    - name: acl-bar-2
+      resource:
+        apiVersion: acl.kafka.crossplane.io/v1alpha1
+        kind: AccessControlList
+        metadata:
+          name: my-topic-5nlks
+desired:
+  resources:
+    # This resource is managed by another function instance, and should NOT be deleted
+    - name: read-acl-0
+      resource:
+        apiVersion: acl.kafka.crossplane.io/v1alpha1
+        kind: AccessControlList
+        metadata:
+          name: my-topic-13ghz
+    # This resource is related to this function, and should NOT be deleted
+    - name: topic
+      resource:
+        apiVersion: topic.kafka.crossplane.io/v1alpha1
+        kind: Topic
+        metadata:
+          name: my-topic
+    - name: acl-foo-95a0e
+      resource:
+        apiVersion: acl.kafka.crossplane.io/v1alpha1
+        kind: AccessControlList
+        metadata:
+          name: my-topic-3b5d6
+    - name: acl-bar-95a0e
+      resource:
+        apiVersion: acl.kafka.crossplane.io/v1alpha1
+        kind: AccessControlList
+        metadata:
+          name: my-topic-c4407
+    - name: acl-foo-88f01
+      resource:
+        apiVersion: acl.kafka.crossplane.io/v1alpha1
+        kind: AccessControlList
+        metadata:
+          name: my-topic-b48b2
+    - name: acl-bar-88f01
+      resource:
+        apiVersion: acl.kafka.crossplane.io/v1alpha1
+        kind: AccessControlList
+        metadata:
+          name: my-topic-68ebc
