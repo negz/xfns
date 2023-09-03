@@ -1,0 +1,35 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: democomposites.gotemplate.xfn.upbound.io
+spec:
+  writeConnectionSecretsToNamespace: upbound-system
+  compositeTypeRef:
+    apiVersion: gotemplate.xfn.upbound.io/v1alpha1
+    kind: DemoComposite
+  resources:
+    - name: service-account
+      base:
+        apiVersion: cloudplatform.gcp.upbound.io/v1beta1
+        kind: ServiceAccount
+        metadata:
+          annotations:
+            meta.upbound.io/example-id: cloudplatform/v1beta1/serviceaccount
+          labels:
+            testing.upbound.io/example-name: example_service_account
+          name: example-service-account
+        spec:
+          forProvider:
+            displayName: Upbound Example Service Account for DemoComposite
+  functions:
+    - name: render-templates
+      type: Container
+      config:
+        apiVersion: gotemplate.xfn.upbound.io/v1alpha1
+        kind: Config
+        spec:
+          template:
+            source: filesystem
+            path: /templates
+      container:
+        image: turkenh/xfn-gotemplate:v0.1.0
