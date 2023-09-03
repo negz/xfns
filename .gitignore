@@ -13,3 +13,9 @@
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
+
+.venv
+.vscode
+__pycache__
+shell.nix
+.mypy_cache

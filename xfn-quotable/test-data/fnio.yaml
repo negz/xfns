@@ -1,0 +1,67 @@
+apiVersion: apiextensions.crossplane.io/v1alpha1
+kind: FunctionIO
+config:
+  apiVersion: database.example.org/v1alpha1
+  kind: Config
+  metadata:
+    name: cloudsql
+  spec:
+    version: POSTGRES_9_6
+observed:
+  composite:
+    resource:
+      apiVersion: database.example.org/v1alpha1
+      kind: XPostgreSQLInstance
+      metadata:
+        name: my-db
+      spec:
+        parameters:
+          storageGB: 20
+        compositionSelector:
+          matchLabels:
+            provider: gcp
+      status:
+        conditions:
+          - type: Ready
+            status: True
+    connectionDetails:
+      - name: uri
+        value: postgresql://db.example.org:5432
+desired:
+  composite:
+    resource:
+      apiVersion: database.example.org/v1alpha1
+      kind: XPostgreSQLInstance
+      metadata:
+        name: my-db
+      spec:
+        parameters:
+          storageGB: 20
+        compositionSelector:
+          matchLabels:
+            provider: gcp
+      status:
+        conditions:
+          - type: Ready
+            status: True
+    connectionDetails:
+      - name: uri
+        value: postgresql://db.example.org:5432
+  resources:
+    - name: cloudsql-instance
+      resource:
+        apiVersion: sql.gcp.upbound.io/v1beta1
+        kind: DatabaseInstance
+        metadata:
+          name: my-db-cloudsql-instance
+        spec:
+          forProvider:
+            databaseVersion: POSTGRES_13
+            deletionProtection: false
+            region: us-west2
+            settings:
+              - diskSize: 20
+                tier: db-f1-micro
+          writeConnectionSecretToRef:
+            namespace: upbound-system
+            name: my-db-cloudsql-instance
